@@ -10,7 +10,7 @@ contract RockPaperScissors {
   event GameCreated(address creator, uint gameNumber, uint bet);
   event GameStarted(address[] players, uint gameNumber);
   event GameComplete(address winner, uint gameNumber);
-  mapping (uint => game) games;
+  mapping (uint => Game) games;
   uint gameNum = 0;
   
   /**
@@ -21,13 +21,13 @@ contract RockPaperScissors {
  */
   function createGame(address participant) payable {
     uint bet;
-    Game currGame;
+    Game storage currGame;
     currGame.bet = msg.value;
     currGame.creator = msg.sender;
     gameNum++;
     currGame.gameNumb = gameNum;
-    games[gameNum] = game;
-    GameCreated(msg.sender, gameNum, game.bet);
+    games[gameNum] = currGame;
+    GameCreated(msg.sender, gameNum, currGame.bet);
   }
   
   /**
@@ -41,8 +41,8 @@ contract RockPaperScissors {
     uint proposedBet;
     uint existingBet;
     uint surplus;
-    address[] players;
-    Game currGame;
+    address[] storage players;
+    Game storage currGame;
     proposedBet = msg.value;
     currGame = games[gameNumber];
     existingBet = currGame.bet;
