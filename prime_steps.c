@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 int is_prime (long long n) {
@@ -21,7 +22,7 @@ int is_prime (long long n) {
     return 0;
   }
   /* Cycle through all odd numbers */
-  for (iter = 3; iter <= n / 2; iter += 2) {
+  for (iter = 3; iter <= (int) sqrt(n); iter += 2) {
     /* Return false if divide is clean */
     if (n % iter == 0) {
       return 0;
@@ -36,7 +37,7 @@ long long* step(int g, long long m, long long n) {
             prime_count = 0,
             curr = 0, 
             last = 0;
-  long long prime_list[n - m/2];
+  long long prime_list[n - m];
   
   long long* answer;
   answer = malloc(sizeof(long long) *2);
@@ -44,36 +45,21 @@ long long* step(int g, long long m, long long n) {
     if (is_prime(iter)) {
       prime_list[prime_count] = iter;
       prime_count++;
-      for (piter = 0; piter < prime_count; piter++) {
-        for (ipiter = 0; ipiter < prime_count; ipiter++) {
-          if (prime_list[ipiter] - prime_list[piter] == g) {
-            printf("FOUND!!!!!\n");
-            answer[0] = prime_list[piter];
-            answer[1] = prime_list[ipiter];
-            return answer;
-          } 
-          printf("%llu - %llu\n", prime_list[ipiter], prime_list[piter]);
-        }
-      }
-      /*
-      if (curr == 0) {
-        curr = iter;
-      } else { 
-        tmp = curr;
-        curr = iter;
-        last = tmp;
-        printf("curr = %llu last = %llu\n", curr, last);
-        if (curr - last == g) {
-          answer[0] = last;
-          answer[1] = curr;
-          return answer;
-        }
-      } 
-      */
-      
+
     } 
   }
-  //printf("answer is NIL\n");
+  for (piter = 0; piter < prime_count; piter++) {
+    for (ipiter = piter+1; ipiter < prime_count; ipiter++) {
+      if (prime_list[ipiter] - prime_list[piter] == g) {
+        answer[0] = prime_list[piter];
+        answer[1] = prime_list[ipiter];
+        return answer;
+      } 
+      if (prime_list[ipiter] - prime_list[piter] > g) {
+        break;
+      }
+    }
+  }
   answer[0] = 0;
   answer[1] = 0;
   return answer;
@@ -81,7 +67,7 @@ long long* step(int g, long long m, long long n) {
 
 int main () {
   long long* answer;
-  answer = (long long*) step(3, 1, 10);
+  answer = (long long*) step(2, 100, 110);
   printf("curr = %llu last = %llu\n", answer[0], answer[1]);
   free(answer);
   return 0;
